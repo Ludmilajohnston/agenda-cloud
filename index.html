@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
@@ -10,56 +11,85 @@
   <link rel="stylesheet" href="style.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 </head>
 
 <body>
 
   <div class="container">
 
-    <h1>Agenda Digital</h1>
+```
+<h1>Agenda Digital</h1>
 
-    <div class="formulario">
+<div class="formulario">
 
-      <input type="text" id="nome" placeholder="Nome">
+  <input
+    type="text"
+    id="nome"
+    placeholder="Nome"
+    autocomplete="name"
+    maxlength="100"
+  >
 
-      <input type="text" id="telefone" placeholder="Telefone">
+  <input
+    type="text"
+    id="telefone"
+    placeholder="Telefone"
+    autocomplete="tel"
+    maxlength="20"
+  >
 
-      <input type="email" id="email" placeholder="E-mail">
+  <input
+    type="email"
+    id="email"
+    placeholder="E-mail"
+    autocomplete="email"
+    maxlength="150"
+  >
 
-      <div class="botoes">
+  <div class="botoes">
 
-        <button onclick="salvarContato()">
-          Salvar
-        </button>
+    <button
+      id="btnSalvar"
+      type="button"
+      onclick="salvarContato()"
+    >
+      Salvar
+    </button>
 
-        <button onclick="limparFormulario()">
-          Cancelar
-        </button>
+    <button
+      type="button"
+      onclick="limparFormulario()"
+    >
+      Cancelar
+    </button>
 
-      </div>
+  </div>
 
-    </div>
+</div>
 
-    <table>
+<table>
 
-      <thead>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Telefone</th>
+      <th>E-mail</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
 
-        <tr>
-          <th>Nome</th>
-          <th>Telefone</th>
-          <th>Email</th>
-          <th>Ações</th>
-        </tr>
+  <tbody id="listaContatos">
+    <!-- Contatos carregados pelo JavaScript -->
+  </tbody>
 
-      </thead>
-
-      <tbody id="listaContatos"></tbody>
-
-    </table>
+</table>
+```
 
   </div>
 
   <script src="app.js"></script>
 
 </body>
+
 </html>
