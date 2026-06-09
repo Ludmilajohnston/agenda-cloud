@@ -2,166 +2,289 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  }
+}
 
 body {
-font-family: Arial, sans-serif;
-background: #f0f2f5;
-padding: 30px;
+
+  font-family: Arial, sans-serif;
+
+  background: #f0f2f5;
+
+  padding: 30px;
 }
 
 .container {
-max-width: 900px;
-margin: auto;
-background: #fff;
-padding: 25px;
-border-radius: 10px;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  max-width: 1000px;
+
+  margin: auto;
+
+  background: white;
+
+  padding: 30px;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 h1 {
-text-align: center;
-margin-bottom: 25px;
-color: #333;
+
+  text-align: center;
+
+  margin-bottom: 30px;
+
+  color: #222;
+
+  font-size: 42px;
 }
 
 .formulario {
-display: flex;
-flex-direction: column;
-gap: 15px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
 }
 
 input {
-width: 100%;
-padding: 12px;
-border: 1px solid #ccc;
-border-radius: 5px;
-font-size: 16px;
+
+  width: 100%;
+
+  padding: 14px;
+
+  border: 1px solid #ccc;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+
+  transition: 0.2s;
 }
 
 input:focus {
-outline: none;
-border-color: #007bff;
+
+  outline: none;
+
+  border-color: #007bff;
+
+  box-shadow:
+    0 0 5px rgba(0, 123, 255, 0.4);
 }
 
 .botoes {
-display: flex;
-gap: 10px;
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 5px;
 }
 
-button {
-flex: 1;
-padding: 12px;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-font-size: 16px;
-color: white;
-transition: 0.3s;
+/* BOTÕES DO FORMULÁRIO */
+.botoes button {
+
+  flex: 1;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-size: 16px;
+
+  color: white;
+
+  transition: 0.3s;
 }
 
-button:hover {
-opacity: 0.9;
+#btnSalvar {
+
+  background: #007bff;
 }
 
-button:first-child {
-background: #007bff;
+#btnSalvar:hover {
+
+  background: #0069d9;
 }
 
-button:last-child {
-background: #6c757d;
+.botoes button:last-child {
+
+  background: #6c757d;
 }
 
+.botoes button:last-child:hover {
+
+  background: #5a6268;
+}
+
+/* TABELA */
 table {
-width: 100%;
-margin-top: 30px;
-border-collapse: collapse;
-table-layout: fixed;
+
+  width: 100%;
+
+  margin-top: 35px;
+
+  border-collapse: collapse;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+}
+
+thead {
+
+  background: #007bff;
+
+  color: white;
 }
 
 th {
-background: #007bff;
-color: white;
+
+  padding: 16px;
+
+  font-size: 16px;
 }
 
-th,
 td {
-padding: 12px;
-border: 1px solid #ddd;
-text-align: center;
-word-wrap: break-word;
-overflow-wrap: break-word;
+
+  padding: 14px;
+
+  border-bottom: 1px solid #eee;
+
+  text-align: center;
+
+  vertical-align: middle;
+}
+
+tbody tr {
+
+  transition: 0.2s;
 }
 
 tbody tr:hover {
-background: #f8f9fa;
+
+  background: #f8f9fa;
 }
 
+/* COLUNA AÇÕES */
+td:last-child {
+
+  width: 140px;
+}
+
+/* BOTÕES DA TABELA */
 td button {
-padding: 8px;
-margin: 2px;
-font-size: 14px;
+
+  width: 40px;
+
+  height: 40px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  color: white;
+
+  font-size: 16px;
+
+  margin: 0 4px;
+
+  transition: 0.2s;
 }
 
-/* Tablets */
+/* EDITAR */
+.editar {
+
+  background: #007bff;
+}
+
+.editar:hover {
+
+  background: #0069d9;
+}
+
+/* EXCLUIR */
+.excluir {
+
+  background: #dc3545;
+}
+
+.excluir:hover {
+
+  background: #c82333;
+}
+
+/* RESPONSIVO */
 @media (max-width: 768px) {
 
-body {
-padding: 15px;
+  body {
+
+    padding: 15px;
+  }
+
+  .container {
+
+    padding: 20px;
+  }
+
+  h1 {
+
+    font-size: 30px;
+  }
+
+  .botoes {
+
+    flex-direction: column;
+  }
+
+  table {
+
+    display: block;
+
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+
+    font-size: 14px;
+
+    padding: 10px;
+  }
+
+  td button {
+
+    width: 34px;
+
+    height: 34px;
+
+    font-size: 14px;
+  }
 }
 
-.container {
-padding: 15px;
-}
-
-.botoes {
-flex-direction: column;
-}
-
-.botoes button {
-width: 100%;
-}
-
-th,
-td {
-padding: 8px;
-font-size: 13px;
-}
-
-td button {
-padding: 6px;
-font-size: 12px;
-}
-}
-
-/* Celulares */
 @media (max-width: 480px) {
 
-body {
-padding: 8px;
-}
+  h1 {
 
-.container {
-padding: 12px;
-}
+    font-size: 24px;
+  }
 
-h1 {
-font-size: 24px;
-}
+  input {
 
-input {
-font-size: 14px;
-padding: 10px;
-}
+    font-size: 14px;
+  }
 
-th,
-td {
-padding: 6px;
-font-size: 11px;
-}
+  th,
+  td {
 
-td button {
-padding: 4px 6px;
-font-size: 11px;
-}
+    font-size: 12px;
+  }
 }
