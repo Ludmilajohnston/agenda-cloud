@@ -11,9 +11,9 @@
 
     <div class="container">
         <header>
-            <h1> Gerenciamento de Contatos</h1>
+            <h1>Gerenciamento de Contatos</h1>
             <div class="header-actions">
-                <span id="usuarioLogado" class="user-tag"> Carregando...</span>
+                <span id="usuarioLogado" class="user-tag">Carregando...</span>
             </div>
         </header>
 
@@ -26,14 +26,14 @@
                     placeholder="Digite o nome para busca"
                     onkeyup="if(event.key === 'Enter') buscarContatos()"
                 />
-                <button onclick="buscarContatos()" class="btn-primary"> Buscar</button>
-                <button onclick="limparBusca()" class="btn-secondary"> Limpar</button>
+                <button onclick="buscarContatos()" class="btn-primary">Buscar</button>
+                <button onclick="limparBusca()" class="btn-secondary">Limpar</button>
             </div>
-            <button onclick="novoContato()" class="btn-success"> Novo</button>
+            <button onclick="novoContato()" class="btn-success">Novo</button>
         </div>
 
         <div class="formulario" id="formulario">
-            <h2 id="formTitle"> Novo Contato</h2>
+            <h2 id="formTitle">Novo Contato</h2>
             
             <div class="form-group">
                 <label for="nome">Nome *</label>
@@ -51,14 +51,14 @@
             </div>
 
             <div class="botoes">
-                <button id="btnSalvar" onclick="salvarContato()" class="btn-primary"> Salvar</button>
-                <button onclick="limparFormulario()" class="btn-secondary"> Cancelar</button>
+                <button id="btnSalvar" onclick="salvarContato()" class="btn-primary">Salvar</button>
+                <button onclick="limparFormulario()" class="btn-secondary">Cancelar</button>
             </div>
         </div>
 
         <div class="table-container">
             <div class="table-header">
-                <h2> Lista de Contatos</h2>
+                <h2>Lista de Contatos</h2>
                 <span id="contadorContatos" class="contador">0 contatos</span>
             </div>
 
@@ -76,7 +76,6 @@
                     <tbody id="listaContatos">
                         <tr>
                             <td colspan="5" class="empty-state">
-                                <span class="empty-icon"></span>
                                 <span>Carregando contatos...</span>
                             </td>
                         </tr>
