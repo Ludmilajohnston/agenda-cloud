@@ -309,7 +309,7 @@ header h1::before {
 }
 
 .table-header h2::before {
-    content: "📋 ";
+    content: " ";
 }
 
 .contador {
