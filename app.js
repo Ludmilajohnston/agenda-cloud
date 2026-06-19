@@ -242,10 +242,12 @@ function limparBusca() {
     listarContatos();
 }
 
+
 document.addEventListener("DOMContentLoaded", async () => {
     await verificarAutenticacao();
     await listarContatos();
 });
+
 
 window.salvarContato = salvarContato;
 window.limparFormulario = limparFormulario;
