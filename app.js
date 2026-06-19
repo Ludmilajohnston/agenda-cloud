@@ -1,267 +1,254 @@
-const SUPABASE_URL =
-  "https://kkbnekygfwizviapvcfo.supabase.co";
+const SUPABASE_URL = "https://kkbnekygfwizviapvcfo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_3Fi7MWfPTdKXOVAF_AxkGw_1QT4xTKm";
 
-const SUPABASE_KEY =
-  "sb_publishable_3Fi7MWfPTdKXOVAF_AxkGw_1QT4xTKm";
-
-const client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let contatoEditando = null;
+let usuarioAtual = null;
+let termoBusca = "";
+
+
+async function verificarAutenticacao() {
+    const { data: { user }, error } = await client.auth.getUser();
+    
+    if (error || !user) {
+        const { data, error: signInError } = await client.auth.signInAnonymously();
+        if (signInError) {
+            console.error("Erro de autenticação:", signInError);
+            alert("❌ Erro ao conectar. Recarregue a página.");
+            return false;
+        }
+        usuarioAtual = data.user;
+    } else {
+        usuarioAtual = user;
+    }
+    
+    const userTag = document.getElementById("usuarioLogado");
+    if (userTag) {
+        userTag.textContent = `👤 ${usuarioAtual.email || 'Convidado'}`;
+    }
+    
+    return true;
+}
+
+
+async function buscarContatos() {
+    termoBusca = document.getElementById("buscaNome").value.trim();
+    await listarContatos();
+}
+
 
 async function listarContatos() {
-
-  try {
-
-    const { data, error } = await client
-      .from("contato")
-      .select("*")
-      .order("id", { ascending: true });
-
-    if (error) {
-      throw error;
+    if (!usuarioAtual) {
+        const autenticado = await verificarAutenticacao();
+        if (!autenticado) return;
     }
 
-    const lista =
-      document.getElementById("listaContatos");
+    try {
+        let query = client
+            .from("contato")
+            .select("*")
+            .eq("user_id", usuarioAtual.id)
+            .order("id", { ascending: true });
 
-    lista.innerHTML = "";
+        if (termoBusca) {
+            query = query.ilike("nome", `%${termoBusca}%`);
+        }
 
-    data.forEach((contato) => {
+        const { data, error } = await query;
 
-      const tr = document.createElement("tr");
+        if (error) throw error;
 
-      tr.innerHTML = `
-        <td>${contato.nome}</td>
-        <td>${contato.telefone}</td>
-        <td>${contato.email}</td>
+        const lista = document.getElementById("listaContatos");
+        lista.innerHTML = "";
 
-        <td>
-          <button class="editar">
-            ✏️
-          </button>
+        const contador = document.getElementById("contadorContatos");
+        if (contador) {
+            contador.textContent = `${data.length} contato${data.length !== 1 ? 's' : ''}`;
+        }
 
-          <button class="excluir">
-            🗑️
-          </button>
-        </td>
-      `;
+        if (data.length === 0) {
+            lista.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        <span class="empty-icon">📭</span>
+                        <span>${termoBusca ? 'Nenhum contato encontrado para "' + termoBusca + '"' : 'Nenhum contato cadastrado'}</span>
+                        <small>${termoBusca ? 'Tente outra busca' : 'Adicione seu primeiro contato!'}</small>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
 
-      tr.querySelector(".editar")
-        .addEventListener("click", () => {
+        data.forEach((contato) => {
+            const tr = document.createElement("tr");
+            
+            tr.innerHTML = `
+                <td>${contato.id}</td>
+                <td>${contato.nome}</td>
+                <td>${contato.telefone}</td>
+                <td>${contato.email}</td>
+                <td>
+                    <button class="editar" data-id="${contato.id}">✏️</button>
+                    <button class="excluir" data-id="${contato.id}">🗑️</button>
+                </td>
+            `;
 
-          editarContato(
-            contato.id,
-            contato.nome,
-            contato.telefone,
-            contato.email
-          );
+            tr.querySelector(".editar").addEventListener("click", () => {
+                editarContato(contato.id, contato.nome, contato.telefone, contato.email);
+            });
 
+            tr.querySelector(".excluir").addEventListener("click", () => {
+                excluirContato(contato.id);
+            });
+
+            lista.appendChild(tr);
         });
 
-      tr.querySelector(".excluir")
-        .addEventListener("click", () => {
-
-          excluirContato(contato.id);
-
-        });
-
-      lista.appendChild(tr);
-
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    alert("Erro ao carregar contatos.");
-
-  }
+    } catch (err) {
+        console.error("Erro ao listar contatos:", err);
+        alert("❌ Erro ao carregar contatos.");
+    }
 }
+
 
 async function salvarContato() {
-
-  const nome =
-    document.getElementById("nome")
-      .value
-      .trim();
-
-  const telefone =
-    document.getElementById("telefone")
-      .value
-      .trim();
-
-  const email =
-    document.getElementById("email")
-      .value
-      .trim();
-
-  if (!nome || !telefone || !email) {
-
-    alert("Preencha todos os campos.");
-
-    return;
-  }
-
-  const emailValido =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailValido.test(email)) {
-
-    alert("E-mail inválido.");
-
-    return;
-  }
-
-  try {
-
-    const btn =
-      document.getElementById("btnSalvar");
-
-    btn.disabled = true;
-
-    btn.textContent = "Salvando...";
-
-    let response;
-
-    if (contatoEditando !== null) {
-
-      response = await client
-        .from("contato")
-        .update({
-          nome,
-          telefone,
-          email
-        })
-        .eq("id", contatoEditando);
-
-    } else {
-
-      response = await client
-        .from("contato")
-        .insert([
-          {
-            nome,
-            telefone,
-            email
-          }
-        ]);
-
+    if (!usuarioAtual) {
+        const autenticado = await verificarAutenticacao();
+        if (!autenticado) return;
     }
 
-    if (response.error) {
-      throw response.error;
+    const nome = document.getElementById("nome").value.trim();
+    const telefone = document.getElementById("telefone").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    if (!nome || !telefone || !email) {
+        alert("❌ Preencha todos os campos.");
+        return;
     }
 
-    const mensagem =
-      contatoEditando !== null
-        ? "Contato atualizado!"
-        : "Contato salvo!";
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailValido.test(email)) {
+        alert("❌ E-mail inválido.");
+        return;
+    }
 
-    limparFormulario();
+    try {
+        const btn = document.getElementById("btnSalvar");
+        btn.disabled = true;
+        btn.textContent = "Salvando...";
 
-    await listarContatos();
+        let response;
 
-    alert(mensagem);
+        if (contatoEditando !== null) {
+            response = await client
+                .from("contato")
+                .update({
+                    nome,
+                    telefone,
+                    email
+                })
+                .eq("id", contatoEditando)
+                .eq("user_id", usuarioAtual.id);
+        } else {
+            response = await client
+                .from("contato")
+                .insert([{
+                    nome,
+                    telefone,
+                    email,
+                    obs: null,
+                    dtcontato: null,
+                    user_id: usuarioAtual.id
+                }]);
+        }
 
-  } catch (err) {
+        if (response.error) throw response.error;
 
-    console.error(err);
+        const mensagem = contatoEditando !== null ? "✅ Contato atualizado!" : "✅ Contato salvo!";
+        limparFormulario();
+        await listarContatos();
+        alert(mensagem);
 
-    alert("Erro ao salvar contato.");
-
-  } finally {
-
-    const btn =
-      document.getElementById("btnSalvar");
-
-    btn.disabled = false;
-
-    btn.textContent =
-      contatoEditando !== null
-        ? "Atualizar"
-        : "Salvar";
-  }
+    } catch (err) {
+        console.error("Erro ao salvar:", err);
+        alert("❌ Erro ao salvar contato.");
+    } finally {
+        const btn = document.getElementById("btnSalvar");
+        btn.disabled = false;
+        btn.textContent = contatoEditando !== null ? "Atualizar" : "Salvar";
+    }
 }
 
-function editarContato(
-  id,
-  nome,
-  telefone,
-  email
-) {
 
-  contatoEditando = id;
-
-  document.getElementById("nome").value =
-    nome;
-
-  document.getElementById("telefone").value =
-    telefone;
-
-  document.getElementById("email").value =
-    email;
-
-  document.getElementById("btnSalvar")
-    .textContent = "Atualizar";
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+function editarContato(id, nome, telefone, email) {
+    contatoEditando = id;
+    document.getElementById("nome").value = nome;
+    document.getElementById("telefone").value = telefone;
+    document.getElementById("email").value = email;
+    document.getElementById("btnSalvar").textContent = "Atualizar";
+    document.getElementById("formTitle").textContent = "✏️ Editar Contato";
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
 
 async function excluirContato(id) {
+    if (!confirm("⚠️ Deseja realmente excluir este contato?")) return;
 
-  const confirmar =
-    confirm(
-      "Deseja realmente excluir este contato?"
-    );
-
-  if (!confirmar) {
-    return;
-  }
-
-  try {
-
-    const { error } = await client
-      .from("contato")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      throw error;
+    if (!usuarioAtual) {
+        const autenticado = await verificarAutenticacao();
+        if (!autenticado) return;
     }
 
-    await listarContatos();
+    try {
+        const { error } = await client
+            .from("contato")
+            .delete()
+            .eq("id", id)
+            .eq("user_id", usuarioAtual.id);
 
-    alert("Contato excluído!");
+        if (error) throw error;
 
-  } catch (err) {
+        await listarContatos();
+        alert("✅ Contato excluído!");
 
-    console.error(err);
-
-    alert("Erro ao excluir contato.");
-  }
+    } catch (err) {
+        console.error("Erro ao excluir:", err);
+        alert("❌ Erro ao excluir contato.");
+    }
 }
+
 
 function limparFormulario() {
-
-  contatoEditando = null;
-
-  document.getElementById("nome").value =
-    "";
-
-  document.getElementById("telefone").value =
-    "";
-
-  document.getElementById("email").value =
-    "";
-
-  document.getElementById("btnSalvar")
-    .textContent = "Salvar";
+    contatoEditando = null;
+    document.getElementById("nome").value = "";
+    document.getElementById("telefone").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("btnSalvar").textContent = "Salvar";
+    document.getElementById("formTitle").textContent = "📝 Novo Contato";
 }
 
-listarContatos();
+
+function novoContato() {
+    limparFormulario();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.getElementById("nome").focus();
+}
+
+
+function limparBusca() {
+    document.getElementById("buscaNome").value = "";
+    termoBusca = "";
+    listarContatos();
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await verificarAutenticacao();
+    await listarContatos();
+});
+
+window.salvarContato = salvarContato;
+window.limparFormulario = limparFormulario;
+window.novoContato = novoContato;
+window.buscarContatos = buscarContatos;
+window.limparBusca = limparBusca;
