@@ -27,10 +27,7 @@ Aplicação web para gerenciamento de contatos com **autenticação de usuários
 ## Funcionalidades
 
 ### Autenticação
-- Login com e-mail e senha
-- Cadastro de novos usuários
 - Login como convidado (anônimo)
-- Logout seguro
 - Sessão persistente
 
 ### CRUD de Contatos
@@ -49,7 +46,6 @@ Aplicação web para gerenciamento de contatos com **autenticação de usuários
 - **Row Level Security (RLS)** configurado no Supabase
 - Cada usuário visualiza e gerencia **apenas seus próprios contatos**
 - Validação de dados no frontend e backend
-- Proteção contra acesso não autorizado
 
 ---
 
