@@ -12,7 +12,7 @@ Aplicação web para gerenciamento de contatos com **autenticação de usuários
 
 ## Acesse a Aplicação
 
-🔗 **[https://ludmilajohnston.github.io/agenda-cloud/](https://ludmilajohnston.github.io/agenda-digital/)**
+🔗 **[https://ludmilajohnston.github.io/agenda-digital/](https://ludmilajohnston.github.io/agenda-digital/)**
 
 ---
 
